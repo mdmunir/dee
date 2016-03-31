@@ -52,7 +52,7 @@ function renderFile($_file_, $_params_ = [])
     return ob_get_clean();
 }
 
-function appRun()
+function run()
 {
     set('baseUrl', $_SERVER['SCRIPT_NAME']);
     $route = rtrim($_SERVER['PATH_INFO'], '/');
@@ -61,8 +61,5 @@ function appRun()
     }
     set('route', $route);
 
-    ob_start();
-    ob_implicit_flush(false);
-    $content = require(APP_PATH . "/controllers/{$route}.php");
-    echo ob_get_clean() . $content;
+    echo renderFile(APP_PATH . "/controllers/{$route}.php");
 }

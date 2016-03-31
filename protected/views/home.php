@@ -1,4 +1,4 @@
-<div class="site-index">
+<div class="home">
 
     <div class="jumbotron">
         <h1>Congratulations!</h1>

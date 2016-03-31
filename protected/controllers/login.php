@@ -14,7 +14,7 @@ if (isset($_POST['submit'])) {
 }
 
 set('title', 'Login');
-return render('login.php', [
+echo render('login.php', [
     'message' => $message,
     'username' => $username,
     'password' => $password,
