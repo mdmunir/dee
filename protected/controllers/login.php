@@ -18,4 +18,4 @@ echo render('login.php', [
     'message' => $message,
     'username' => $username,
     'password' => $password,
-    ], true);
+    ]);

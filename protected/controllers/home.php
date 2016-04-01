@@ -1,3 +1,3 @@
 <?php
 set('title', 'Welcome');
-echo render('home.php', [], true);
+echo render('home.php');

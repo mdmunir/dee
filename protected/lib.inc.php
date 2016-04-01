@@ -28,7 +28,13 @@ function redirectTo($route, $params = [])
     exit();
 }
 
-function render($view, $params = [], $layout = false)
+function render($view, $params = [])
+{
+    $content = renderPartial($view, $params);
+    return renderFile(APP_PATH . '/views/layout.php', ['content' => $content]);
+}
+
+function renderPartial($view, $params = [])
 {
     if (strncmp($view, '/', 1) !== 0) { // kalau diawali '/' berarti absolut path
         $view = APP_PATH . '/views/' . $view;
@@ -36,11 +42,7 @@ function render($view, $params = [], $layout = false)
     if (!is_file($view) && is_file($view . '.php')) {
         $view .= '.php';
     }
-    $content = renderFile($view, $params);
-    if ($layout) {
-        return renderFile(APP_PATH . '/views/layout.php', ['content' => $content]);
-    }
-    return $content;
+    return renderFile($view, $params);
 }
 
 function renderFile($_file_, $_params_ = [])

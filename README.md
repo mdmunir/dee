@@ -14,7 +14,7 @@ Buat file file di folder `protected/controllers` dengan nama `hello.php`.
 <?php
 
 set('title','Hello');
-echo render('hello.php',['name' => 'World'], true);
+echo render('hello.php',['name' => 'World']);
 ```
 
 2. Membuat view.
