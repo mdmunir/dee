@@ -1,3 +1,7 @@
+<?php
+/* @var $this DView */
+$this->title = 'Login';
+?>
 <form method="post">
     <div class="form-group">
         <?= $message ?>

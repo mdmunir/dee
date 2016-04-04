@@ -1,3 +1,7 @@
+<?php
+/* @var $this DView */
+$this->title = 'Welcome';
+?>
 <div class="home">
 
     <div class="jumbotron">

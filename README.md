@@ -1,5 +1,7 @@
-Contoh Framework PHP Sederhana
+Contoh Framework PHP Sederhana V2.0
 ==============================
+Untuk liat versi sebelumnya silakan buka branch `master.1.x`.
+Ini adalah versi 2. Di sini kita menggunakan OOP secara penuh.
 
 Instalasi
 ---------
@@ -8,17 +10,26 @@ Download filenya dari [sini](https://github.com/mdmunir/simple-php-fw/archive/ma
 Cara Penggunaan
 ---------------
 
-1. Membuat controller.
-Buat file file di folder `protected/controllers` dengan nama `hello.php`.
+# Membuat controller.
+Buat class di folder `protected/controllers` dengan nama `HelloController.php`.
 ```php
-<?php
-
-set('title','Hello');
-echo render('hello.php',['name' => 'World']);
+class HelloController extends DController
+{
+    public function actionIndex()
+    {
+        return $this->render('index',['name'=>'World']);
+    }
+}
 ```
 
-2. Membuat view.
-Kemudian di folder `protected/views` kita buat file `hello.php`
+* Perhatikan huruf besar huruf kecil. Controller class harus merupakan turunan dari class `DController`.
+* Nama class harus diakhiri dengan `Controller`
+* Nama class harus sama dengan nama file dengan akhiran `.php`.
+* Nama class menggunakan format camel case(huruf besar di awal kata). Misal, routenya adalah `hello`, maka nama classnya
+adalah `HelloController`. Jika nama routenya adalah `hello-guys` maka nama classnya adalah `HelloGuysController`.
+
+# Membuat view.
+Kemudian di folder `protected/views/hello` kita buat file `index.php`
 ```php
 <div class="hello">
     <div class="jumbotron">
@@ -28,6 +39,27 @@ Kemudian di folder `protected/views` kita buat file `hello.php`
 
         <p><a href="https://mdmunir.wordpress.com" class="btn btn-lg btn-success">Get started</a></p>
     </div>
+</div>
+```
+
+* Folder view dari controller bersesuaian dengan id controller.
+* Jika id controller adalah `hello`, maka viewnya ada di folder `protected/views/hello`. Begitu juga jika
+id controller adalah `hello-guys`, maka viewnya ada di folder `protected/views/hello-guys`.
+* Kita juga bisa menyisipkan kode javascript di view. contoh
+
+```php
+<?php
+$js = <<<JS
+    $('#click-me').click(function(){
+        alert('Hello...');
+    });
+JS;
+$this->registerJs($js); // default di register ke jquery ready. 
+// opsi lainnya adalah $this->registerJs($js,DView::POS_HEAD); atau $this->registerJs($js,DView::POS_END);
+$this->title = 'Contoh JS';
+?>
+<div>
+    <button id="click-me">Click Me</button>
 </div>
 ```
 
