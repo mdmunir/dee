@@ -18,9 +18,9 @@ class DApp
         'db' => ['class' => 'DDbConnection']
     ];
     public $basePath;
-    public $baseUrl;
     public $params = [];
     public $defaultRoute = 'site';
+    public $showScriptName = true;
 
     public function __construct($config = [])
     {
@@ -52,16 +52,16 @@ class DApp
             }
             return $component;
         }
+        if (method_exists($this, 'get' . $name)) {
+            $method = 'get' . $name;
+            return $this->$method();
+        }
         throw new Exception("Component {$name} not exists");
     }
 
     public function run()
     {
-        if ($this->baseUrl === null) {
-            $this->baseUrl = $_SERVER['SCRIPT_NAME'];
-        }
-
-        $route = trim($_SERVER['PATH_INFO'], '/');
+        $route = trim($this->getPathInfo(), '/');
         if (empty($route)) {
             $route = $this->defaultRoute;
         }
@@ -78,5 +78,36 @@ class DApp
         /* @var $controller DController */
         $controller = new $class($id);
         echo $controller->run($route);
+    }
+    private $_pathInfo;
+    private $_baseUrl;
+    private $_scriptUrl;
+
+    public function getPathInfo()
+    {
+        if ($this->_pathInfo === null) {
+            $this->_scriptUrl = $_SERVER['SCRIPT_NAME'];
+            $this->_baseUrl = dirname($this->_scriptUrl);
+            $requestUri = $_SERVER['REQUEST_URI'];
+            if (strpos($requestUri, $this->_scriptUrl) === 0) {
+                $this->_pathInfo = substr($requestUri, strlen($this->_scriptUrl));
+            } elseif (strpos($requestUri, $this->_baseUrl) === 0) {
+                $this->_pathInfo = substr($requestUri, strlen($this->_baseUrl));
+            } else {
+                $this->_pathInfo = '';
+            }
+        }
+
+        return $this->_pathInfo;
+    }
+
+    public function getBaseUrl()
+    {
+        return $this->_baseUrl;
+    }
+
+    public function getScriptUrl()
+    {
+        return $this->_scriptUrl;
     }
 }

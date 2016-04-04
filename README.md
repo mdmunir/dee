@@ -64,3 +64,16 @@ $this->title = 'Contoh JS';
 ```
 
 Untuk mengakses halaman yang kita buat, urlnya adalah `localhost/path/app/index.php/hello`
+
+# Clean URL
+Untuk membuat url yang lebih bersih (menghilangkan `index.php`) lakukan beberapa langkah berikut.
+
+* Membuat file `.htaccess`.
+```
+RewriteEngine on
+# RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . index.php
+```
+* Merubah setingan `showScriptName`. Buka file `protected/config/main.php`. Ubah showScriptName` menjadi `false`. 

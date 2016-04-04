@@ -27,8 +27,8 @@ class SiteController extends DController
             $password = $_POST['password'];
 
             if ($username == 'admin' && $password == 'admin') {
-                $_SESSION['__identity'] = $username;
-                $this->redirect('home');
+                Dee::$app->user->login($username);
+                $this->redirect('index');
             } else {
                 $message = 'Wrong username password';
             }
@@ -44,7 +44,7 @@ class SiteController extends DController
     public function actionLogout()
     {
         Dee::$app->user->logout();
-        $this->redirect('home');
+        $this->redirect('index');
     }
 
     public function actionContoh()

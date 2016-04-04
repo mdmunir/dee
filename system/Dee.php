@@ -62,7 +62,8 @@ class Dee
 
     public static function createUrl($route, $params = [])
     {
-        $url = static::$app->baseUrl . '/' . rtrim($route, '/');
+        $app = static::$app;
+        $url = ($app->showScriptName ? $app->scriptUrl : $app->baseUrl) . '/' . rtrim($route, '/');
         if (!empty($params) && ($query = http_build_query($params)) !== '') {
             $url .= '?' . $query;
         }

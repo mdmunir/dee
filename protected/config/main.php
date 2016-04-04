@@ -8,6 +8,7 @@ return[
 //            'password' => ''
         ]
     ],
+    'showScriptName' => true,
     'params' => [
     ]
 ];
