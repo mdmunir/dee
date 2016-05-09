@@ -1,14 +1,14 @@
 <?php
+$dbConfig = is_file('db.php') ? require 'db.php' : ['dsn' => 'sqlite:@app/runtime/data.sql'];
 return[
     'basePath' => dirname(__DIR__),
     'components' => [
-        'db' => [
-            'dsn' => 'sqlite:@app/runtime/data.sql',
-//            'username' => '',
-//            'password' => ''
-        ]
+        'db' => $dbConfig,
     ],
     'showScriptName' => true,
+    'imports'=>[
+        '@app/models'
+    ],
     'params' => [
     ]
 ];

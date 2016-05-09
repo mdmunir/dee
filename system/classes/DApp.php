@@ -21,6 +21,7 @@ class DApp
     public $params = [];
     public $defaultRoute = 'site';
     public $showScriptName = true;
+    public $imports = [];
 
     public function __construct($config = [])
     {
@@ -40,6 +41,9 @@ class DApp
         }
         if ($this->basePath === null) {
             throw new Exception("'basePath' must be specified");
+        }
+        foreach ($this->imports as $path) {
+            Dee::import($path);
         }
     }
 

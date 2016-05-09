@@ -77,3 +77,66 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . index.php
 ```
 * Merubah setingan `showScriptName`. Buka file `protected/config/main.php`. Ubah showScriptName` menjadi `false`. 
+
+# Koneksi ke Database
+Copy file `protected/config/db.example.php`, rename menjadi `protected/config/db.php` kemudian sesuaikan dsn, user dan passwordnya.
+Misal untuk konek ke mysql, maka dsnnya adalah 'mysql:host=localhost;dbname=mydb'.
+Setelah koneksi terbentuk, maka kita bisa memakainya di kontroller, misalnya.
+```php
+public function actionTampil()
+{
+    $sql = 'select * from user';
+    $users = Dee::$app->db->queryAll($sql);
+    return $this->render('tampil',['users' => $users]);
+}
+
+// kemudian di view tampil.php
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Username</th>
+            <th>Full Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach($users as $user): ?>
+        <tr>
+            <td><?= $user['id']?></td>
+            <td><?= $user['username']?></td>
+            <td><?= $user['fullname']?></td>
+        </tr>
+        <?php endforeach ?>
+    </tbody>
+</table>
+```
+
+Selain diakses langsung dari controller. Kita juga bisa membuat model untuk menangani input output database.
+Buat file `MUser.php` di folder `protected/models`.
+```php
+class MUser
+{
+    public function getAll()
+    {
+        $sql = 'select * from user';
+        return Dee::$app->db->queryAll($sql);
+    }
+
+    public function addNew($user)
+    {
+        $sql = 'insert into user(username,fullname) values (:username,:fullname)';
+        return Dee::$app->db->execute($sql,[
+            ':username' => $user['username], 
+            ':fullname' => $user['fullname'],
+        ]);
+    }
+}
+
+// di controller
+public function actionCreate()
+{
+    $model = new MUser();
+    $user = $_POST;
+    $model->addNew($user);
+}
+```
