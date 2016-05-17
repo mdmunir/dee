@@ -6,6 +6,8 @@
  * @property DView $view
  * @property DDbConnection $db
  * @property DUser $user
+ * @property DRequest $request
+ * @property DUrlManager $urlManager
  *
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 1.0
@@ -15,7 +17,9 @@ class DApp
     public $components = [
         'view' => ['class' => 'DView'],
         'user' => ['class' => 'DUser'],
-        'db' => ['class' => 'DDbConnection']
+        'db' => ['class' => 'DDbConnection'],
+        'request' => ['class' => 'DRequest'],
+        'urlManager' => ['class' => 'DUrlManager'],
     ];
     public $basePath;
     public $params = [];
@@ -65,10 +69,12 @@ class DApp
 
     public function run()
     {
-        $route = trim($this->getPathInfo(), '/');
+        list($route, $params) = $this->request->resolve();
+
         if (empty($route)) {
             $route = $this->defaultRoute;
         }
+
         if (($pos = strpos($route, '/')) !== false) {
             $id = substr($route, 0, $pos);
             $route = substr($route, $pos + 1);
@@ -76,12 +82,13 @@ class DApp
             $id = $route;
             $route = '';
         }
-        $class = str_replace(' ', '', ucwords(str_replace('-', ' ', $id))) . 'Controller';
+
+        $class = str_replace(' ', '', ucwords(str_replace('-', ' ', $id))).'Controller';
         require ($this->basePath . "/controllers/{$class}.php");
 
         /* @var $controller DController */
         $controller = new $class($id);
-        echo $controller->run($route);
+        echo $controller->run($route, $params);
     }
     private $_pathInfo;
     private $_baseUrl;

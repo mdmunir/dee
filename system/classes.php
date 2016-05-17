@@ -5,4 +5,6 @@ return[
     'DController' => __DIR__ . '/classes/DController.php',
     'DUser' => __DIR__ . '/classes/DUser.php',
     'DView' => __DIR__ . '/classes/DView.php',
+    'DRequest' => __DIR__ . '/classes/DRequest.php',
+    'DUrlManager' => __DIR__ . '/classes/DUrlManager.php',
 ];

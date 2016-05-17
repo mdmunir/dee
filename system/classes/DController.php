@@ -45,17 +45,26 @@ class DController
         Dee::redirect($route, $params);
     }
 
-    public function run($route)
+    public function run($route, $params = [])
     {
-        $params = [];
         if ($route == '') {
             $route = $this->defaultAction;
-        } elseif (($pos = strpos($route, '/')) !== false) {
-            $params = explode('/', substr($route, $pos + 1));
-            $route = substr($route, 0, $pos);
         }
         $this->route = $this->id . '/' . $route;
         $action = 'action' . str_replace(' ', '', ucwords(str_replace('-', ' ', $route)));
-        return call_user_func_array([$this, $action], $params);
+
+        $reflection = new ReflectionMethod($this, $action);
+        $args = [];
+        foreach ($reflection->getParameters() as $param) {
+            $name = $param->getName();
+            if (array_key_exists($name, $params)) {
+                $args[] = $params[$name];
+            } elseif ($param->isDefaultValueAvailable()) {
+                $args[] = $param->getDefaultValue();
+            } else {
+                throw new Exception("Missing parameter '{$name}'");
+            }
+        }
+        return call_user_func_array([$this, $action], $args);
     }
 }

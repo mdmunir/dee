@@ -9,7 +9,8 @@ $this->title = 'Welcome';
 
         <p class="lead">You have successfully created your own application.</p>
 
-        <p><a href="https://mdmunir.wordpress.com" class="btn btn-lg btn-success">Get started</a></p>
+        <p><a href="https://mdmunir.wordpress.com" class="btn btn-lg btn-success">Get started</a>
+            <a href="<?= Dee::createUrl('pages/{page}', ['page'=>'about'])?>" class="btn btn-lg btn-success">About</a></p>
     </div>
 
     <div class="body-content">

@@ -35,9 +35,9 @@ class SiteController extends DController
         }
 
         return $this->render('login', [
-            'message' => $message,
-            'username' => $username,
-            'password' => $password,
+                'message' => $message,
+                'username' => $username,
+                'password' => $password,
         ]);
     }
 
@@ -50,5 +50,10 @@ class SiteController extends DController
     public function actionContoh()
     {
         return $this->render('contoh');
+    }
+
+    public function actionPage($page)
+    {
+        return $this->render('pages/' . $page);
     }
 }

@@ -7,6 +7,18 @@ Instalasi
 ---------
 Download filenya dari [sini](https://github.com/mdmunir/simple-php-fw/archive/master.zip), kemudian ekstak.
 
+Fitur
+------
+
+* Menggunakan pola MVC.
+* Menggunakan autoloader. Meminimalkan penggunaan `include` dan `require`.
+* `View templating`. Beberapa halaman dapat berbagi `layout` yang sama.
+* Koneksi database dengan PDO.
+* Clean url.
+* Support url rules/routing. Bisa untuk membangun aplikasi REST.
+* Dan lain-lain.
+
+
 Cara Penggunaan
 ---------------
 
@@ -76,7 +88,9 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . index.php
 ```
-* Merubah setingan `showScriptName`. Buka file `protected/config/main.php`. Ubah showScriptName` menjadi `false`. 
+* Merubah setingan `showScriptName`. Buka file `protected/config/main.php`. Ubah `urlManager->showScriptName` menjadi `false`. 
+
+
 
 # Koneksi ke Database
 Copy file `protected/config/db.example.php`, rename menjadi `protected/config/db.php` kemudian sesuaikan dsn, user dan passwordnya.
