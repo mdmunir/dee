@@ -24,6 +24,29 @@ class DRequest
             return [$route, $_GET];
         }
     }
+
+    public function get($name = null, $default = null)
+    {
+        return $name === null ? $_GET : (isset($_GET[$name]) ? $_GET[$name] : $default);
+    }
+    private $_bodyParams;
+
+    public function post($name = null, $default = null)
+    {
+        if ($this->_bodyParams === null) {
+            $contenType = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] :
+                (isset($_SERVER['HTTP_CONTENT_TYPE']) ? $_SERVER['HTTP_CONTENT_TYPE'] : false);
+            if ($contenType && strpos($contenType, 'json') !== false) {
+                $this->_bodyParams = json_decode(file_get_contents('php://input'), true);
+            } elseif ($this->getMethod() === 'POST') {
+                $this->_bodyParams = $_POST;
+            } else {
+                $this->_bodyParams = [];
+                mb_parse_str(file_get_contents('php://input'), $this->_bodyParams);
+            }
+        }
+        return $name === null ? $this->_bodyParams : (isset($this->_bodyParams[$name]) ? $this->_bodyParams[$name] : $default);
+    }
     private $_pathInfo;
     private $_baseUrl;
     private $_scriptUrl;

@@ -90,7 +90,19 @@ RewriteRule . index.php
 ```
 * Merubah setingan `showScriptName`. Buka file `protected/config/main.php`. Ubah `urlManager->showScriptName` menjadi `false`. 
 
+# REST Url
+Rest url dapat dibuat dengan mengisi setingan `urlManager->rules`. Contoh:
 
+```php
+'rules' => [
+    'GET,HEAD product' => 'product/index',
+    'GET,HEAD product/{id:\d+}' => 'product/view',
+    'POST product' => 'product/create',
+    'PUT product/{id:\d+}' => 'product/update',
+    'DELETE product/{id:\d+}' => 'product/delete',
+]
+```
+Setelah itu kita buat controller `ProductController` dan mengimplementasikan action `actionIndex()`, `actionView()` dan seterusnya.
 
 # Koneksi ke Database
 Copy file `protected/config/db.example.php`, rename menjadi `protected/config/db.php` kemudian sesuaikan dsn, user dan passwordnya.
