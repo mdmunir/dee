@@ -1,12 +1,16 @@
 <?php
 
+namespace dee\base;
+
+use Dee;
+
 /**
  * Description of DView
  *
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 1.0
  */
-class DView
+class View
 {
     const POS_HEAD = 1;
     const POS_END = 2;

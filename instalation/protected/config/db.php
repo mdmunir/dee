@@ -1,5 +1,4 @@
 <?php
-// copy file ini kemudian rename menjadi db.php
 return [
     'dsn'=>'sqlite:@app/runtime/data.sql',
     'username'=>'',

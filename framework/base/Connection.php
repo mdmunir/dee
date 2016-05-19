@@ -1,18 +1,23 @@
 <?php
 
+namespace dee\base;
+
+use Dee;
+
 /**
  * Description of DDbConnection
  *
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 1.0
  */
-class DDbConnection
+class Connection
 {
     public $dsn;
     public $username;
     public $password;
     public $attributes;
     public $pdoClass;
+
     /**
      *
      * @var PDO
@@ -24,8 +29,8 @@ class DDbConnection
         if ($this->_pdo === null) {
             $pdoClass = $this->pdoClass? : 'PDO';
             $dsn = $this->dsn;
-            if (strncmp('sqlite:@app/', $dsn, 12) === 0) {
-                $dsn = 'sqlite:' . Dee::$app->basePath . '/' . substr($dsn, 12);
+            if (strncmp('sqlite:@', $dsn, 8) === 0) {
+                $dsn = 'sqlite:' . Dee::getAlias(substr($dsn, 7));
             }
             $this->_pdo = new $pdoClass($dsn, $this->username, $this->password, $this->attributes);
         }

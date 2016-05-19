@@ -1,12 +1,12 @@
 <?php
-
+namespace dee\base;
 /**
  * Description of DUser
  *
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 1.0
  */
-class DUser
+class User
 {
     public $id;
     private $_profile = [];

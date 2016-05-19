@@ -1,12 +1,17 @@
 <?php
 
+namespace app\controllers;
+
+use dee\base\Controller;
+
+use Dee;
 /**
  * Description of SiteController
  *
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 1.0
  */
-class SiteController extends DController
+class Site extends Controller
 {
 
     public function actionHello()
@@ -28,7 +33,7 @@ class SiteController extends DController
 
             if ($username == 'admin' && $password == 'admin') {
                 Dee::$app->user->login($username);
-                $this->redirect('index');
+                Dee::redirect('site/index');
             } else {
                 $message = 'Wrong username password';
             }
@@ -44,7 +49,7 @@ class SiteController extends DController
     public function actionLogout()
     {
         Dee::$app->user->logout();
-        $this->redirect('index');
+        Dee::redirect('site/index');
     }
 
     public function actionContoh()
