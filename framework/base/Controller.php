@@ -17,21 +17,6 @@ class Controller
     public $id;
     public $route;
 
-    public function __construct($id, $config = [])
-    {
-        if (isset($config['_aliases'])) {
-            $aliases = $this->aliases();
-            foreach ($config['_aliases'] as $key => $value) {
-                $this->{$aliases[$key]} = $value;
-            }
-            unset($config['_aliases']);
-        }
-        foreach ($config as $key => $value) {
-            $this->$key = $value;
-        }
-        $this->id = $id;
-    }
-
     public function render($view, $params = [])
     {
         $dview = Dee::$app->view;

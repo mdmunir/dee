@@ -51,22 +51,25 @@ class Request
     protected function resolveRoute()
     {
         $this->prepare();
-        $pathInfo = ltrim($this->getPathInfo(), '/');
-        $method = $this->getMethod();
-        if (isset($this->_routes[$pathInfo])) {
-            list($route, $verbs, ) = $this->_routes[$pathInfo];
-            if (empty($verbs) || in_array($method, $verbs)) {
-                return [$route, []];
-            }
-        }
-        foreach ($this->_routes as $regex => $data) {
-            list($route, $verbs, $varNames) = $data;
-            if ((empty($verbs) || in_array($method, $verbs)) && preg_match($regex, $pathInfo, $matches)) {
-                $i = 0;
-                foreach ($varNames as $varName) {
-                    $params[$varName] = $matches[++$i];
+        $pathInfo = $this->getPathInfo();
+
+        if (!empty($this->_routes)) {
+            $method = $this->getMethod();
+            if (isset($this->_routes[$pathInfo])) {
+                list($route, $verbs, ) = $this->_routes[$pathInfo];
+                if (empty($verbs) || in_array($method, $verbs)) {
+                    return [$route, []];
                 }
-                return[$route, $params];
+            }
+            foreach ($this->_routes as $regex => $data) {
+                list($route, $verbs, $varNames) = $data;
+                if ((empty($verbs) || in_array($method, $verbs)) && preg_match($regex, $pathInfo, $matches)) {
+                    $i = 0;
+                    foreach ($varNames as $varName) {
+                        $params[$varName] = $matches[++$i];
+                    }
+                    return[$route, $params];
+                }
             }
         }
         return [$pathInfo, []];
@@ -124,9 +127,9 @@ class Request
             $this->_baseUrl = dirname($this->_scriptUrl);
             $requestUri = $_SERVER['REQUEST_URI'];
             if (strpos($requestUri, $this->_scriptUrl) === 0) {
-                $this->_pathInfo = substr($requestUri, strlen($this->_scriptUrl));
+                $this->_pathInfo = ltrim(substr($requestUri, strlen($this->_scriptUrl)), '/');
             } elseif (strpos($requestUri, $this->_baseUrl) === 0) {
-                $this->_pathInfo = substr($requestUri, strlen($this->_baseUrl));
+                $this->_pathInfo = ltrim(substr($requestUri, strlen($this->_baseUrl)), '/');
             } else {
                 $this->_pathInfo = '';
             }

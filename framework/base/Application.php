@@ -23,7 +23,6 @@ class Application
         'user' => ['class' => 'dee\base\User'],
         'db' => ['class' => 'dee\base\Connection'],
         'request' => ['class' => 'dee\base\Request'],
-        'urlManager' => ['class' => 'dee\base\UrlManager'],
     ];
     public $basePath;
     public $params = [];
@@ -94,17 +93,30 @@ class Application
             $route = '';
         }
 
+        $ns = $this->controllerNamespace;
+        $base = Dee::getAlias('@' . str_replace('\\', '/', $ns));
         /* @var $controller Controller */
-        if (($result = $this->createController($id, $route, $config)) !== false) {
+        if (($result = $this->createController($id, $route, $ns, $base)) !== false) {
             list($controller, $route) = $result;
 
+            if (isset($config['_aliases'])) {
+                $aliases = $controller->aliases();
+                foreach ($config['_aliases'] as $key => $value) {
+                    $controller->{$aliases[$key]} = $value;
+                }
+                unset($config['_aliases']);
+            }
+            foreach ($config as $key => $value) {
+                $controller->$key = $value;
+            }
+            $controller->id = $id;
             echo $controller->run($route, $params, PHP_SAPI !== 'cli');
         } else {
             throw new \Exception('Not Found');
         }
     }
 
-    public function createController($id, $route, $config = [])
+    public function createController($id, $route, $ns, $base)
     {
         $pos = strrpos($id, '/');
         if ($pos === false) {
@@ -116,15 +128,12 @@ class Application
         }
         $className = $prefix . str_replace(' ', '', ucwords(str_replace('-', ' ', $className)));
 
-        $ns = $this->controllerNamespace;
-
-        $base = Dee::getAlias('@' . str_replace('\\', '/', $ns));
         if (is_file($file = $base . '/' . $className . '.php')) {
             require $file;
             $className = $ns . '\\' . str_replace('/', '\\', $className);
-            return [new $className($id, $config), $route];
+            return [new $className(), $route];
         } elseif ($route !== '') {
-            return $this->createController($id . '/' . $route, '', $config);
+            return $this->createController($id . '/' . $route, '');
         }
         return false;
     }
