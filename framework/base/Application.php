@@ -29,7 +29,7 @@ class Application
     public $defaultRoute = 'site';
     public $showScriptName = true;
     public $aliases = [];
-    public $controllerNamespace;
+    public $controllerNamespace = 'app\controllers';
     private $_memoryReserve;
 
     public function __construct($config = [])
@@ -96,6 +96,7 @@ class Application
         $ns = $this->controllerNamespace;
         $base = Dee::getAlias('@' . str_replace('\\', '/', $ns));
         /* @var $controller Controller */
+
         if (($result = $this->createController($id, $route, $ns, $base)) !== false) {
             list($controller, $route) = $result;
 
@@ -112,7 +113,7 @@ class Application
             $controller->id = $id;
             echo $controller->run($route, $params, PHP_SAPI !== 'cli');
         } else {
-            throw new \Exception('Not Found');
+            throw new \Exception("Page {$id}/{$route} not found");
         }
     }
 
@@ -133,7 +134,7 @@ class Application
             $className = $ns . '\\' . str_replace('/', '\\', $className);
             return [new $className(), $route];
         } elseif ($route !== '') {
-            return $this->createController($id . '/' . $route, '');
+            return $this->createController($id . '/' . $route, '', $ns, $base);
         }
         return false;
     }
@@ -183,7 +184,6 @@ class Application
 
     public function handleError($code, $message, $file, $line)
     {
-        //throw new \Exception($message);
         $strs = "0# Error($code): \"$message\" at $file:$line";
         $traces = array_slice(debug_backtrace(), 1);
         $i = 1;

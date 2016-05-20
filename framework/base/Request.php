@@ -55,20 +55,25 @@ class Request
 
         if (!empty($this->_routes)) {
             $method = $this->getMethod();
-            if (isset($this->_routes[$pathInfo])) {
-                list($route, $verbs, ) = $this->_routes[$pathInfo];
-                if (empty($verbs) || in_array($method, $verbs)) {
-                    return [$route, []];
+            if (isset($this->_routes['static'][$pathInfo])) {
+                foreach ($this->_routes['static'][$pathInfo] as $data) {
+                    list($route, $params, $verbs ) = $data;
+                    if (empty($verbs) || in_array($method, $verbs)) {
+                        return [$route, $params];
+                    }
                 }
             }
-            foreach ($this->_routes as $regex => $data) {
-                list($route, $verbs, $varNames) = $data;
-                if ((empty($verbs) || in_array($method, $verbs)) && preg_match($regex, $pathInfo, $matches)) {
-                    $i = 0;
-                    foreach ($varNames as $varName) {
-                        $params[$varName] = $matches[++$i];
+            foreach ($this->_routes['var'] as $regex => $routes) {
+                if (preg_match($regex, $pathInfo, $matches)) {
+                    foreach ($routes as $data) {
+                        list($route, $params, $verbs, $varNames) = $data;
+                        if (empty($verbs) || in_array($method, $verbs)) {
+                            foreach ($varNames as $p => $varName) {
+                                $params[$varName] = $matches[$p];
+                            }
+                            return[$route, $params];
+                        }
                     }
-                    return[$route, $params];
                 }
             }
         }
@@ -126,6 +131,9 @@ class Request
             $this->_scriptUrl = $_SERVER['SCRIPT_NAME'];
             $this->_baseUrl = dirname($this->_scriptUrl);
             $requestUri = $_SERVER['REQUEST_URI'];
+            if (($pos = strpos($requestUri, '?')) !== false) {
+                $requestUri = substr($requestUri, 0, $pos);
+            }
             if (strpos($requestUri, $this->_scriptUrl) === 0) {
                 $this->_pathInfo = ltrim(substr($requestUri, strlen($this->_scriptUrl)), '/');
             } elseif (strpos($requestUri, $this->_baseUrl) === 0) {
@@ -191,9 +199,16 @@ class Request
                     } else {
                         $methods = [];
                     }
-                    list($regex, $variables) = $this->parse($pattern);
-                    $this->_routes[$regex] = [$route, $methods, $variables];
+
+                    if (is_array($route)) {
+                        $params = array_slice($route, 1);
+                        $route = $route[0];
+                    } else {
+                        $params = [];
+                    }
+                    $this->parse($pattern, $route, $params, $methods);
                 }
+
                 if ($file) {
                     file_put_contents($file, json_encode($this->_routes));
                 }
@@ -204,28 +219,46 @@ class Request
     /**
      * Parses a route string that does not contain optional segments.
      */
-    protected function parse($route)
+    protected function parse($pattern, $route, $params, $verbs)
     {
-        $route = ltrim($route, '/');
-        if (!preg_match_all(self::REGEX, $route, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER)) {
-            return [$route, []];
-        }
-
-        $regex = '';
-        $variables = [];
-        $offset = 0;
-        foreach ($matches as $set) {
-            if ($set[0][1] > $offset) {
-                $regex .= preg_quote(substr($route, $offset, $set[0][1] - $offset), '~');
+        $pattern = ltrim($pattern, '/');
+        if (preg_match_all(self::REGEX, $pattern, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER)) {
+            $regex = '~^';
+            $variables = [];
+            $offset = 0;
+            $i = 1;
+            foreach ($matches as $match) {
+                if ($match[0][1] > $offset) {
+                    $regex .= preg_quote(substr($pattern, $offset, $match[0][1] - $offset), '~');
+                }
+                $variables['d' . $i] = $match[1][0];
+                $_regex = isset($match[2][0]) ? $match[2][0] : self::DEFAULT_REGEX;
+                $regex .= "(?P<d{$i}>$_regex)";
+                $offset = $match[0][1] + strlen($match[0][0]);
+                $i++;
             }
-            $variables[] = $set[1][0];
-            $regex .= '(' . (isset($set[2][0]) ? $set[2][0] : self::DEFAULT_REGEX) . ')';
-            $offset = $set[0][1] + strlen($set[0][0]);
-        }
 
-        if ($offset != strlen($route)) {
-            $regex .= preg_quote(substr($route, $offset), '~');
+            if ($offset != strlen($pattern)) {
+                $regex .= preg_quote(substr($pattern, $offset), '~');
+            }
+            $regex .= '$~';
+            if (isset($this->_routes['var'][$regex])) {
+                $this->_routes['var'][$regex][] = [$route, $params, $verbs, $variables];
+                usort($this->_routes['var'][$regex], function($v1, $v2) {
+                    return count($v1[2]) >= count($v2[2]) ? -1 : 1;
+                });
+            } else {
+                $this->_routes['var'][$regex] = [[$route, $params, $verbs, $variables]];
+            }
+        } else {
+            if (isset($this->_routes['static'][$pattern])) {
+                $this->_routes['static'][$pattern][] = [$route, $params, $verbs];
+                usort($this->_routes['static'][$pattern], function($v1, $v2) {
+                    return count($v1[2]) >= count($v2[2]) ? -1 : 1;
+                });
+            } else {
+                $this->_routes['static'][$pattern] = [[$route, $params, $verbs]];
+            }
         }
-        return ['~^' . $regex . '$~', $variables];
     }
 }

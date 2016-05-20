@@ -4,7 +4,8 @@ return[
     'components' => [
         'request' => [
             'rules' => [
-                'pages/{page}' => 'site/page'
+                'tentang' => ['site/page', 'page' => 'about'],
+                'pages/{page}' => 'site/page',
             ],
             'cache' => true,
         ],

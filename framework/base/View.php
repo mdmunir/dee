@@ -33,7 +33,7 @@ class View
         } elseif (is_file($view . '.php')) {
             return $this->renderPhp($view . '.php', $params);
         }
-        throw new Exception("View {$view} not found");
+        throw new \Exception("View {$view} not found");
     }
 
     protected function renderPhp($_file_, $_params_ = [])
