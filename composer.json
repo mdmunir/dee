@@ -1,0 +1,23 @@
+{
+    "name": "mdmunir/dee-app",
+    "description": "Simple PHP Framework",
+    "type": "project",
+    "license": "BSD-3-Clause",
+    "support": {
+        "issues": "https://github.com/mdmunir/dee/issues?state=open",
+        "source": "https://github.com/mdmunir/dee"
+    },
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Misbahul D Munir",
+            "email": "misbahuldmunir@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "config": {
+        "process-timeout": 1800
+    }
+}
