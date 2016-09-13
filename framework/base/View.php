@@ -5,7 +5,7 @@ namespace dee\base;
 use Dee;
 
 /**
- * Description of DView
+ * Description of View
  *
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 1.0
@@ -20,6 +20,8 @@ class View
     public $title;
     public $params = [];
     public $js = [];
+    public $jsFiles = [];
+    public $jsMap = [];
 
     public function render($view, $params = [])
     {
@@ -52,6 +54,21 @@ class View
         $this->js[$pos][] = $js;
     }
 
+    public function registerJsFile($jsFile, $pos = self::POS_END)
+    {
+        foreach ($this->jsMap as $file => $map) {
+            if (($n = strlen($file)) <= strlen($jsFile) && $file === substr($jsFile, -$n)) {
+                if ($map) {
+                    $jsFile = $map;
+                    break;
+                } else {
+                    return;
+                }
+            }
+        }
+        $this->jsFiles[$pos][md5($jsFile)] = $jsFile;
+    }
+
     public function begin()
     {
         ob_start();
@@ -61,12 +78,24 @@ class View
     public function end()
     {
         $content = ob_get_clean();
-        $jsHead = empty($this->js[self::POS_HEAD]) ? '' :
+        $jsHead = '';
+        if (!empty($this->jsFiles[self::POS_HEAD])) {
+            foreach ($this->jsFiles[self::POS_HEAD] as $file) {
+                $jsHead .= "<script src=\"{$file}\" type=\"text/javascript\"></script>\n";
+            }
+        }
+        $scriptEnd = '';
+        if (!empty($this->jsFiles[self::POS_END])) {
+            foreach ($this->jsFiles[self::POS_END] as $file) {
+                $scriptEnd .= "<script src=\"{$file}\" type=\"text/javascript\"></script>\n";
+            }
+        }
+        $jsHead .= empty($this->js[self::POS_HEAD]) ? '' :
             "<script>\n" . implode("\n", $this->js[self::POS_HEAD]) . "\n</script>";
         $jsEnd = empty($this->js[self::POS_READY]) ? '' :
-            "(function($){\n" . implode("\n", $this->js[self::POS_READY]) . "\n})(jQuery);";
+            "jQuery(document).ready(function(){\n" . implode("\n", $this->js[self::POS_READY]) . "\n});";
         $jsEnd .= empty($this->js[self::POS_END]) ? '' : "\n" . implode("\n", $this->js[self::POS_END]);
-        $jsEnd = empty(trim($jsEnd)) ? '' : "<script>\n{$jsEnd}\n</script>";
+        $jsEnd = $scriptEnd . (empty(trim($jsEnd)) ? '' : "<script>\n{$jsEnd}\n</script>");
         echo strtr($content, [
             '<!--#SCRIPT_HEAD-->' => $jsHead,
             '<!--#SCRIPT_END-->' => $jsEnd,
