@@ -59,6 +59,9 @@ class Application
         foreach ($this->aliases as $alias => $path) {
             Dee::setAlias($alias, $path);
         }
+        if (PHP_SAPI !== 'cli' && !isset(Dee::$aliases['@web'])) {
+            Dee::setAlias('@web', $this->request->getBaseUrl());
+        }
     }
 
     public function __get($name)

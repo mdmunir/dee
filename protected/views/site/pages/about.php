@@ -1,5 +1,5 @@
 <?php
-/* @var $this DView */
+/* @var $this \dee\base\View */
 ?>
 <h2>TEST ROUTES</h2>
 <?= __FILE__ ?>

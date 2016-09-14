@@ -1,5 +1,5 @@
 <?php
-/* @var $this DView */
+/* @var $this \dee\base\View */
 $this->title = 'Welcome';
 ?>
 <div class="home">

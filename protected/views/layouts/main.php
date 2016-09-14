@@ -1,17 +1,18 @@
 <?php
-/* @var $this DView */
-$this->begin();
+/* @var $this dee\base\View */
+$this->beginPage();
+
+$this->registerPackage('bootstrap');
 ?>
 <!DOCTYPE html>
 <html>
     <head>
         <title><?= $this->title ?></title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
-        <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1.min.js"></script>
-        <!--#SCRIPT_HEAD-->
+        <?php $this->head() ?>
     </head>
     <body>
+        <?php $this->beginBody() ?>
         <div class="wrap">
             <div class="container">
                 <div class="pull-right">
@@ -25,8 +26,8 @@ $this->begin();
                 <?= $content ?>
             </div>
         </div>
-        <!--#SCRIPT_END-->
+        <?php $this->endBody() ?>
     </body>
 </html>
 <?php
-$this->end();
+$this->endPage();

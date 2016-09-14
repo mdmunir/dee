@@ -1,6 +1,6 @@
 <?php
 
-/* @var $this DView */
+/* @var $this \dee\base\View */
 
 $js = <<<JS
     $('#click-me').click(function(){
