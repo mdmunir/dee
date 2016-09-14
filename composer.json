@@ -19,5 +19,10 @@
     },
     "config": {
         "process-timeout": 1800
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
     }
 }

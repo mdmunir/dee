@@ -5,7 +5,7 @@ namespace dee\base;
 use Dee;
 
 /**
- * Description of DController
+ * Description of Controller
  *
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 1.0

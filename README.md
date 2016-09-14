@@ -18,6 +18,8 @@ Fitur
 * Menggunakan autoloader. Meminimalkan penggunaan `include` dan `require`.
 * `View templating`. Beberapa halaman dapat berbagi `layout` yang sama.
 * Koneksi database dengan PDO.
+* Register js dan css.
+* Asset bundle.
 * Clean url.
 * Support url rules/routing. Bisa untuk membangun aplikasi REST.
 * Aplikasi Console.
@@ -183,7 +185,7 @@ public function actionTampil()
 ```
 
 Selain diakses langsung dari controller. Kita juga bisa membuat model untuk menangani input output database.
-Buat file `MUser.php` di folder `protected/models`.
+Buat file `User.php` di folder `protected/models`.
 ```php
 namespace app\models;
 
@@ -199,7 +201,7 @@ class User
     {
         $sql = 'insert into user(username,fullname) values (:username,:fullname)';
         return \Dee::$app->db->execute($sql,[
-            ':username' => $user['username], 
+            ':username' => $user['username'], 
             ':fullname' => $user['fullname'],
         ]);
     }

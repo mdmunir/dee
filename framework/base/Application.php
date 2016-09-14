@@ -5,7 +5,7 @@ namespace dee\base;
 use Dee;
 
 /**
- * Description of DApp
+ * Description of Application
  *
  * @property View $view
  * @property Connection $db

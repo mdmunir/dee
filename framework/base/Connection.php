@@ -5,7 +5,7 @@ namespace dee\base;
 use Dee;
 
 /**
- * Description of DDbConnection
+ * Description of Connection
  *
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 1.0

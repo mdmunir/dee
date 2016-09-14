@@ -1,7 +1,7 @@
 <?php
 namespace dee\base;
 /**
- * Description of DUser
+ * Description of User
  *
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 1.0
