@@ -30,6 +30,11 @@ class Application
     public $showScriptName = true;
     public $aliases = [];
     public $controllerNamespace = 'app\controllers';
+    /**
+     *
+     * @var Filter[]
+     */
+    public $filters = [];
     private $_memoryReserve;
 
     public function __construct($config = [])
@@ -53,7 +58,7 @@ class Application
             throw new Exception("'basePath' must be specified");
         }
         if ($this->controllerNamespace === null) {
-            throw new Exception("'controllerNamespace' must be specified");
+            throw new \Exception("'controllerNamespace' must be specified");
         }
         Dee::setAlias('@app', $this->basePath);
         foreach ($this->aliases as $alias => $path) {
@@ -96,11 +101,8 @@ class Application
             $route = '';
         }
 
-        $ns = $this->controllerNamespace;
-        $base = Dee::getAlias('@' . str_replace('\\', '/', $ns));
         /* @var $controller Controller */
-
-        if (($result = $this->createController($id, $route, $ns, $base)) !== false) {
+        if (($result = $this->createController($id, $route)) !== false) {
             list($controller, $route) = $result;
 
             if (isset($config['_aliases'])) {
@@ -113,15 +115,24 @@ class Application
             foreach ($config as $key => $value) {
                 $controller->$key = $value;
             }
-            $controller->id = $id;
             echo $controller->run($route, $params, PHP_SAPI !== 'cli');
         } else {
             throw new \Exception("Page {$id}/{$route} not found");
         }
     }
 
-    public function createController($id, $route, $ns, $base)
+    /**
+     *
+     * @param type $id
+     * @param type $route
+     * @param type $ns
+     * @param type $base
+     * @return boolean|array
+     */
+    public function createController($id, $route)
     {
+        $ns = $this->controllerNamespace;
+        $base = Dee::getAlias('@' . str_replace('\\', '/', $ns));
         $pos = strrpos($id, '/');
         if ($pos === false) {
             $className = $id;
@@ -135,9 +146,10 @@ class Application
         if (is_file($file = $base . '/' . $className . '.php')) {
             require $file;
             $className = $ns . '\\' . str_replace('/', '\\', $className);
-            return [new $className(), $route];
+            $controller = new $className($id, $this);
+            return [$controller, $route];
         } elseif ($route !== '') {
-            return $this->createController($id . '/' . $route, '', $ns, $base);
+            return $this->createController($id . '/' . $route, '');
         }
         return false;
     }

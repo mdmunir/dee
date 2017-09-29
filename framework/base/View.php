@@ -44,7 +44,7 @@ class View
     protected $corePackages = [
         'jquery' => [
             'js' => [
-                '//code.jquery.com/jquery-2.1.1.min.js',
+                '//code.jquery.com/jquery-2.2.4.min.js',
             ]
         ],
     ];

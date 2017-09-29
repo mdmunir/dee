@@ -16,6 +16,17 @@ class Controller
     public $defaultAction = 'index';
     public $id;
     public $route;
+    /**
+     *
+     * @var Application
+     */
+    public $parent;
+
+    public function __construct($id, $parent = null)
+    {
+        $this->id = $id;
+        $this->parent = $parent;
+    }
 
     public function render($view, $params = [])
     {
@@ -36,7 +47,15 @@ class Controller
         return $dview->render($view, $params);
     }
 
-    public function run($route, $params = [], $assoc = true)
+    /**
+     *
+     * @param type $route
+     * @param type $params
+     * @param type $assoc
+     * @return type
+     * @throws \Exception
+     */
+    public function run($route = '', $params = [], $assoc = true)
     {
         if ($route == '') {
             $route = $this->defaultAction;
@@ -61,7 +80,34 @@ class Controller
         if (!$assoc && count($params)) {
             $args = array_merge($args, $params);
         }
-        return call_user_func_array([$this, $action], $args);
+        if ($this->parent === null) {
+            $filters = $this->filters();
+        } else {
+            $filters = array_merge($this->parent->filters, $this->filters());
+        }
+        foreach ($filters as $i => $filter) {
+            if (!is_object($filter)) {
+                $filters[$i] = Dee::createObject($filter);
+            }
+            if (!$filter->before()) {
+                return;
+            }
+        }
+        $output = call_user_func_array([$this, $action], $args);
+        foreach (array_reverse($filters) as $filter) {
+            $output = $filter->after($output);
+        }
+        return $output;
+    }
+
+    /**
+     *
+     * @return array|Filter[]
+     */
+    public function filters()
+    {
+        return[
+        ];
     }
 
     protected function aliases()
