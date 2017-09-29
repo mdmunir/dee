@@ -27,5 +27,4 @@ install:
     ./init --overwrite=n
 
 script:
-  - composer validate --strict
   - vendor/bin/phpunit
