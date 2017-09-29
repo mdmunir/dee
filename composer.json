@@ -21,7 +21,10 @@
         "phpunit/phpunit": "4.8.34"
     },
     "config": {
-        "process-timeout": 1800
+        "process-timeout": 1800,
+        "platform": {
+            "php": "5.4"
+        }
     },
     "extra": {
         "branch-alias": {

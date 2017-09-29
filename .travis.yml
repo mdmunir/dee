@@ -1,6 +1,10 @@
 
 language: php
 
+env:
+  global:
+    - DEFAULT_COMPOSER_FLAGS="--prefer-dist --no-interaction --no-progress --optimize-autoloader"
+    
 php:
   - 5.4
   - 5.5
@@ -17,7 +21,7 @@ cache:
 
 install:
   - travis_retry composer self-update && composer --version
-  - travis_retry composer install --prefer-dist --no-interaction
+  - travis_retry composer install $DEFAULT_COMPOSER_FLAGS
 # setup application:
   - |
     ./init --overwrite=n
