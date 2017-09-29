@@ -4,7 +4,8 @@
 /composer.phar
 /nbproject
 /dee
-phpunit.xml
+/phpunit.xml
+/vendor
 .vagrant
 Vagrantfile
 .idea

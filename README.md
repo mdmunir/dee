@@ -106,7 +106,7 @@ Setelah itu di view kita, kita bisa menggunakan paket tersebut dengan merigester
 
 $this->registerPackage('bootstrap');
 ```
-Saat ini paket inti yang tersedia adalah `jquery` yang mengarah ke `//code.jquery.com/jquery-2.1.1.min.js`.
+Saat ini paket inti yang tersedia adalah `jquery` yang mengarah ke `//code.jquery.com/jquery-2.2.4.min.js`.
 Anda dapat menggunakan jquery anda sendiri dengan cara menimpah konfigursinya
 ```php
 'components' => [

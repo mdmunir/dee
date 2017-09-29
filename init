@@ -4,6 +4,7 @@ if (PHP_SAPI !== 'cli') {
     die('You are not allowed to perform this action');
 }
 
+$params = getParams();
 $root = str_replace('\\', '/', __DIR__);
 $env = [
     'setWritable' => [
@@ -21,7 +22,7 @@ $files = getFileList("$root/instalation");
 
 $all = false;
 foreach ($files as $file) {
-    if (!copyFile($root, "instalation/$file", $file, $all)) {
+    if (!copyFile($root, "instalation/$file", $file, $all, $params)) {
         break;
     }
 }
@@ -55,7 +56,7 @@ function getFileList($root, $basePath = '')
     return $files;
 }
 
-function copyFile($root, $source, $target, &$all)
+function copyFile($root, $source, $target, &$all, $params)
 {
     if (!is_file($root . '/' . $source)) {
         echo "       skip $target ($source not exist)\n";
@@ -72,8 +73,7 @@ function copyFile($root, $source, $target, &$all)
             echo "      exist $target\n";
             echo "            ...overwrite? [Yes|No|All|Quit] ";
 
-
-            $answer = trim(fgets(STDIN));
+            $answer = !empty($params['overwrite']) ? $params['overwrite'] : trim(fgets(STDIN));
             if (!strncasecmp($answer, 'q', 1)) {
                 return false;
             } else {
@@ -113,4 +113,24 @@ function setExecutable($root, $paths)
         echo "      chmod 0755 $executable\n";
         @chmod("$root/$executable", 0755);
     }
+}
+
+function getParams()
+{
+    $rawParams = [];
+    if (isset($_SERVER['argv'])) {
+        $rawParams = $_SERVER['argv'];
+        array_shift($rawParams);
+    }
+
+    $params = [];
+    foreach ($rawParams as $param) {
+        if (preg_match('/^--(\w+)(=(.*))?$/', $param, $matches)) {
+            $name = $matches[1];
+            $params[$name] = isset($matches[3]) ? $matches[3] : true;
+        } else {
+            $params[] = $param;
+        }
+    }
+    return $params;
 }
