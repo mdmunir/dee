@@ -117,10 +117,7 @@ class Request
         }
         return $name === null ? $this->_bodyParams : (isset($this->_bodyParams[$name]) ? $this->_bodyParams[$name] : $default);
     }
-    /**
-     *
-     * @var pathInfo, baseUrl, scriptUrl
-     */
+    
     private $_pathInfo;
     private $_baseUrl;
     private $_scriptUrl;

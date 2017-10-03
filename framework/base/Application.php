@@ -3,6 +3,7 @@
 namespace dee\base;
 
 use Dee;
+use Exception;
 
 /**
  * Description of Application
@@ -58,7 +59,7 @@ class Application
             throw new Exception("'basePath' must be specified");
         }
         if ($this->controllerNamespace === null) {
-            throw new \Exception("'controllerNamespace' must be specified");
+            throw new Exception("'controllerNamespace' must be specified");
         }
         Dee::setAlias('@app', $this->basePath);
         foreach ($this->aliases as $alias => $path) {
@@ -123,10 +124,8 @@ class Application
 
     /**
      *
-     * @param type $id
-     * @param type $route
-     * @param type $ns
-     * @param type $base
+     * @param string $id
+     * @param string $route
      * @return boolean|array
      */
     public function createController($id, $route)

@@ -49,10 +49,10 @@ class Controller
 
     /**
      *
-     * @param type $route
-     * @param type $params
-     * @param type $assoc
-     * @return type
+     * @param string $route
+     * @param array $params
+     * @param bool $assoc
+     * @return string|mixed
      * @throws \Exception
      */
     public function run($route = '', $params = [], $assoc = true)

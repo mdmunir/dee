@@ -20,7 +20,7 @@ class Connection
 
     /**
      *
-     * @var PDO
+     * @var \PDO
      */
     private $_pdo;
 
@@ -38,7 +38,7 @@ class Connection
 
     /**
      *
-     * @return PDO
+     * @return \PDO
      */
     public function getPdo()
     {
