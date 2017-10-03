@@ -3,6 +3,11 @@ Dee Framework
 
 Framework PHP dengan pola MVC. Cocok untuk media belajar cara kerja framework.
 
+[![Latest Stable Version](https://poser.pugx.org/mdmunir/dee-app/v/stable)](https://packagist.org/packages/mdmunir/dee-app)
+[![Latest Unstable Version](https://poser.pugx.org/mdmunir/dee-app/v/unstable)](https://packagist.org/packages/mdmunir/dee-app)
+[![Build Status](https://travis-ci.org/mdmunir/dee.svg?branch=master)](https://travis-ci.org/mdmunir/dee)
+[![License](https://poser.pugx.org/mdmunir/dee-app/license)](https://packagist.org/packages/mdmunir/dee-app)
+
 Instalasi
 ---------
 Download filenya dari [sini](https://github.com/mdmunir/dee/archive/master.zip), kemudian ekstak.

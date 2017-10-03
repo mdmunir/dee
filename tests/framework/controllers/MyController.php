@@ -20,4 +20,9 @@ class MyController extends Controller
     {
         return 'hallo cak';
     }
+
+    public function actionJson()
+    {
+        return [3426, 'cak munir'];
+    }
 }

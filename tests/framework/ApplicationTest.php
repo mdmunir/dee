@@ -42,4 +42,18 @@ class ApplicationTest extends \tests\TestCase
         $url = Dee::$app->createUrl('users/profile/{name}', ['name' => 'cak-munir']);
         $this->assertEquals('/users/profile/cak-munir', $url);
     }
+
+    public function testFilter()
+    {
+        $this->mockApplication([
+            'controllerNamespace' => __NAMESPACE__ . '\controllers',
+            'filters' => [
+                'tests\framework\JsonFilter'
+            ]
+        ]);
+        list($controller,) = Dee::$app->createController('my-controller', '');
+
+        $output = $controller->run('json');
+        $this->assertEquals(json_encode([3426, 'cak munir']), $output);
+    }
 }

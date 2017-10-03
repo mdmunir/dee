@@ -144,8 +144,10 @@ class Application
         $className = $prefix . str_replace(' ', '', ucwords(str_replace('-', ' ', $className)));
 
         if (is_file($file = $base . '/' . $className . '.php')) {
-            require $file;
             $className = $ns . '\\' . str_replace('/', '\\', $className);
+            if (!class_exists($className)) {
+                require $file;
+            }
             $controller = new $className($id, $this);
             return [$controller, $route];
         } elseif ($route !== '') {

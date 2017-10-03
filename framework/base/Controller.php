@@ -87,7 +87,7 @@ class Controller
         }
         foreach ($filters as $i => $filter) {
             if (!is_object($filter)) {
-                $filters[$i] = Dee::createObject($filter);
+                $filters[$i] = $filter = Dee::createObject($filter);
             }
             if (!$filter->before()) {
                 return;
