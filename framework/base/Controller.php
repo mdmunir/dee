@@ -32,7 +32,7 @@ class Controller
     {
         $dview = Dee::$app->view;
         if (strncmp($view, '/', 1)) {
-            $view = '/' . $this->id . '/' . $view;
+            $view = "/{$this->id}/$view";
         }
         $content = $dview->render($view, $params);
         return $dview->render($this->layout, ['content' => $content]);
@@ -42,7 +42,7 @@ class Controller
     {
         $dview = Dee::$app->view;
         if (strncmp($view, '/', 1)) {
-            $view = '/' . $this->id . $view;
+            $view = "/{$this->id}/$view";
         }
         return $dview->render($view, $params);
     }
@@ -110,7 +110,7 @@ class Controller
         ];
     }
 
-    protected function aliases()
+    public function aliases()
     {
         return[];
     }

@@ -17,4 +17,9 @@ class ControllerTest extends \tests\TestCase
         $this->assertEquals('index', $controller->run());
         $this->assertEquals('hallo cak', $controller->run('hello'));
     }
+
+    public function testRender()
+    {
+
+    }
 }
