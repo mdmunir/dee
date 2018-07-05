@@ -121,20 +121,21 @@ class Request
     private $_pathInfo;
     private $_baseUrl;
     private $_scriptUrl;
+    private $_requestUri;
 
     public function getPathInfo()
     {
-        if ($this->_pathInfo === null) {
-            $this->_scriptUrl = $_SERVER['SCRIPT_NAME'];
-            $this->_baseUrl = dirname($this->_scriptUrl);
-            $requestUri = $_SERVER['REQUEST_URI'];
-            if (($pos = strpos($requestUri, '?')) !== false) {
-                $requestUri = substr($requestUri, 0, $pos);
-            }
-            if (strpos($requestUri, $this->_scriptUrl) === 0) {
-                $this->_pathInfo = ltrim(substr($requestUri, strlen($this->_scriptUrl)), '/');
-            } elseif (strpos($requestUri, $this->_baseUrl) === 0) {
-                $this->_pathInfo = ltrim(substr($requestUri, strlen($this->_baseUrl)), '/');
+        if (defined('FORCE_REDIRECT_REST')) {
+            return FORCE_REDIRECT_REST;
+        }
+        if ($this->_pathInfo === null) {            
+            $scriptUrl = $this->getScriptUrl();
+            $baseUrl = $this->getBaseUrl();
+            $requestUri = $this->getRequestUri();
+            if (strpos($requestUri, $scriptUrl) === 0) {
+                $this->_pathInfo = ltrim(substr($requestUri, strlen($scriptUrl)), '/');
+            } elseif (strpos($requestUri, $baseUrl) === 0) {
+                $this->_pathInfo = ltrim(substr($requestUri, strlen($baseUrl)), '/');
             } else {
                 $this->_pathInfo = '';
             }
@@ -145,12 +146,29 @@ class Request
 
     public function getBaseUrl()
     {
+        if ($this->_baseUrl === null) {
+            $this->_baseUrl = dirname($this->getScriptUrl());
+        }
         return $this->_baseUrl;
     }
 
     public function getScriptUrl()
     {
+        if ($this->_scriptUrl === null) {
+            $this->_scriptUrl = $_SERVER['SCRIPT_NAME'];
+        }
         return $this->_scriptUrl;
+    }
+
+    public function getRequestUri()
+    {
+        if ($this->_requestUri === null) {
+            $this->_requestUri = $_SERVER['REQUEST_URI'];
+            if (($pos = strpos($this->_requestUri, '?')) !== false) {
+                $this->_requestUri = substr($this->_requestUri, 0, $pos);
+            }
+        }
+        return $this->_requestUri;
     }
 
     /**

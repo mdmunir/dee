@@ -259,7 +259,8 @@ class View
         if (!empty($this->js[self::POS_LOAD])) {
             $scriptEnd .= "\njQuery(window).on('load', function(){\n" . implode("\n", $this->js[self::POS_LOAD]) . "\n});";
         }
-        if (!empty(trim($scriptEnd))) {
+        $scriptEnd = trim($scriptEnd);
+        if (!empty($scriptEnd)) {
             $end .= "\n<script>\n{$scriptEnd}\n</script>";
         }
 

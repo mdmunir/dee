@@ -12,6 +12,7 @@ use Exception;
  * @property Connection $db
  * @property User $user
  * @property Request $request
+ * @property Response $response
  * @property UrlManager $urlManager
  *
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
@@ -24,6 +25,7 @@ class Application
         'user' => ['class' => 'dee\base\User'],
         'db' => ['class' => 'dee\base\Connection'],
         'request' => ['class' => 'dee\base\Request'],
+        'response' => ['class' => 'dee\base\Response'],
     ];
     public $basePath;
     public $params = [];
@@ -31,6 +33,11 @@ class Application
     public $showScriptName = true;
     public $aliases = [];
     public $controllerNamespace = 'app\controllers';
+    /**
+     *
+     * @var Controller 
+     */
+    public $controller;
     /**
      *
      * @var Filter[]
@@ -83,6 +90,13 @@ class Application
             $method = 'get' . $name;
             return $this->$method();
         }
+        if (isset($this->filters[$name])) {
+            $component = $this->filters[$name];
+            if (!is_object($component)) {
+                return $this->filters[$name] = Dee::createObject($component);
+            }
+            return $component;
+        }
         throw new Exception("Component {$name} not exists");
     }
 
@@ -105,7 +119,7 @@ class Application
         /* @var $controller Controller */
         if (($result = $this->createController($id, $route)) !== false) {
             list($controller, $route) = $result;
-
+            $this->controller = $controller;
             if (isset($config['_aliases'])) {
                 $aliases = $controller->aliases();
                 foreach ($config['_aliases'] as $key => $value) {
@@ -116,7 +130,8 @@ class Application
             foreach ($config as $key => $value) {
                 $controller->$key = $value;
             }
-            echo $controller->run($route, $params, PHP_SAPI !== 'cli');
+            $this->response->data = $controller->run($route, $params, PHP_SAPI !== 'cli');
+            $this->response->send();
         } else {
             throw new \Exception("Page {$id}/{$route} not found");
         }
@@ -177,11 +192,13 @@ class Application
 
     public function registerErrorHandler()
     {
-        ini_set('display_errors', false);
-        set_exception_handler([$this, 'handleException']);
-        set_error_handler([$this, 'handleError']);
-        $this->_memoryReserve = str_repeat('x', 262144);
-        register_shutdown_function([$this, 'handleFatalError']);
+        if (defined('DEE_ERROR_HANDLER') && DEE_ERROR_HANDLER) {
+            ini_set('display_errors', false);
+            set_exception_handler([$this, 'handleException']);
+            set_error_handler([$this, 'handleError']);
+            $this->_memoryReserve = str_repeat('x', 262144);
+            register_shutdown_function([$this, 'handleFatalError']);
+        }
     }
 
     /**
@@ -190,34 +207,41 @@ class Application
      */
     public function handleException($exception)
     {
+        restore_error_handler();
+        restore_exception_handler();
+
         $str = get_class($exception) . ': "' . $exception->getMessage() . '" at ' . $exception->getFile() .
             ':' . $exception->getLine() . "\n" . $exception->getTraceAsString();
 
-        ob_end_clean();
+        if (ob_get_level()) {
+            ob_end_clean();
+        }
         echo PHP_SAPI === 'cli' ? $str : "<pre>\n$str\n</pre>";
-        exit(1);
+        //exit(1);
     }
 
     public function handleError($code, $message, $file, $line)
     {
-        $strs = "0# Error($code): \"$message\" at $file:$line";
-        $traces = array_slice(debug_backtrace(), 1);
-        $i = 1;
-        foreach ($traces as $trace) {
-            $str = "\n" . $i++ . '# ';
-            if (isset($trace['file'])) {
-                $str .= $trace['file'] . (isset($trace['line']) ? ':' . $trace['line'] : '') . '  ';
-            }
-            if (isset($trace['class'], $trace['function'])) {
-                $str .= "{$trace['class']}::{$trace['function']}(";
-                $str .= (empty($trace['args']) ? '' : substr(json_encode($trace['args']), 1, -1)) . ')';
-            }
-            $strs .= $str;
-        }
-        ob_end_clean();
+        if (error_reporting() & $code) {
+            $exception = new \ErrorException($message, $code, $code, $file, $line);
 
-        echo PHP_SAPI === 'cli' ? $strs : "<pre>\n$strs\n</pre>";
-        exit(1);
+            // in case error appeared in __toString method we can't throw any exception
+            $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+            array_shift($trace);
+            foreach ($trace as $frame) {
+                if ($frame['function'] === '__toString') {
+                    $this->handleException($exception);
+                    if (defined('HHVM_VERSION')) {
+                        flush();
+                    }
+                    exit(1);
+                }
+            }
+
+            throw $exception;
+        }
+        return false;
+        //exit(1);
     }
 
     public function handleFatalError()

@@ -16,6 +16,7 @@ class Controller
     public $defaultAction = 'index';
     public $id;
     public $route;
+    public $action;
     /**
      *
      * @var Application
@@ -60,6 +61,7 @@ class Controller
         if ($route == '') {
             $route = $this->defaultAction;
         }
+        $this->action = $route;
         $this->route = $this->id . '/' . $route;
         $action = 'action' . str_replace(' ', '', ucwords(str_replace('-', ' ', $route)));
 
@@ -80,15 +82,24 @@ class Controller
         if (!$assoc && count($params)) {
             $args = array_merge($args, $params);
         }
-        if ($this->parent === null) {
-            $filters = $this->filters();
-        } else {
-            $filters = array_merge($this->parent->filters, $this->filters());
-        }
-        foreach ($filters as $i => $filter) {
-            if (!is_object($filter)) {
-                $filters[$i] = $filter = Dee::createObject($filter);
+        
+        $filters = [];
+        if ($this->parent !== null) {
+            foreach ($this->parent->filters as $i => $filter) {
+                if (!is_object($filter)) {
+                    $this->parent->filters[$i] = $filter = Dee::createObject($filter);
+                }
+                $filters[$i] = $filter;
+                if (!$filter->before()) {
+                    return;
+                }
             }
+        }
+        foreach ($this->filters() as $i => $filter) {
+            if (!is_object($filter)) {
+                $filter = Dee::createObject($filter);
+            }
+            $filters[$i] = $filter;
             if (!$filter->before()) {
                 return;
             }

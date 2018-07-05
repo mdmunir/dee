@@ -6,4 +6,5 @@ return[
     'dee\base\User' => __DIR__ . '/base/User.php',
     'dee\base\View' => __DIR__ . '/base/View.php',
     'dee\base\Request' => __DIR__ . '/base/Request.php',
+    'dee\base\Response' => __DIR__ . '/base/Response.php',
 ];
