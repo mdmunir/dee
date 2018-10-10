@@ -20,6 +20,10 @@ class ControllerTest extends \tests\TestCase
 
     public function testRender()
     {
-
+        $controller = new controllers\MyController('my');
+        $controller->layout = false;
+        
+        $content = $controller->render('@tests/framework/views/view1.php', ['param1' => 'Cak Munir']);
+        $this->assertEquals('Hello Cak Munir.', $content);
     }
 }
