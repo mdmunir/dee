@@ -36,7 +36,11 @@ class Controller
             $view = "/{$this->id}/$view";
         }
         $content = $dview->render($view, $params);
-        return $dview->render($this->layout, ['content' => $content]);
+        if ($this->layout) {
+            return $dview->render($this->layout, ['content' => $content]);
+        } else {
+            return $content;
+        }
     }
 
     public function renderPartial($view, $params = [])
