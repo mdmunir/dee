@@ -20,6 +20,7 @@ class ControllerTest extends \tests\TestCase
 
     public function testRender()
     {
+        $this->mockApplication();
         $controller = new controllers\MyController('my');
         $controller->layout = false;
         
