@@ -29,18 +29,20 @@ class ApplicationTest extends \tests\TestCase
     public function testCreateUrl()
     {
         $this->mockApplication();
+        Dee::$app->request->setBaseUrl('/');
+        Dee::$app->request->setScriptUrl('index.php');
 
         $url = Dee::$app->createUrl('site/index');
-        $this->assertEquals('/site/index', $url);
+        $this->assertEquals('index.php/site/index', $url);
 
         $url = Dee::$app->createUrl('site/index', ['page' => 'about']);
-        $this->assertEquals('/site/index?page=about', $url);
+        $this->assertEquals('index.php/site/index?page=about', $url);
 
         $url = Dee::$app->createUrl('users/{id}', ['id' => 3426]);
-        $this->assertEquals('/users/3426', $url);
+        $this->assertEquals('index.php/users/3426', $url);
 
         $url = Dee::$app->createUrl('users/profile/{name}', ['name' => 'cak-munir']);
-        $this->assertEquals('/users/profile/cak-munir', $url);
+        $this->assertEquals('index.php/users/profile/cak-munir', $url);
     }
 
     public function testFilter()

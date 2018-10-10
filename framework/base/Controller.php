@@ -32,17 +32,21 @@ class Controller
     public function render($view, $params = [])
     {
         $dview = Dee::$app->view;
-        if (strncmp($view, '/', 1)) {
+        if (strncmp($view, '@', 1) !== 0 && strncmp($view, '/', 1) !== 0) {
             $view = "/{$this->id}/$view";
         }
         $content = $dview->render($view, $params);
-        return $dview->render($this->layout, ['content' => $content]);
+        if ($this->layout) {
+            return $dview->render($this->layout, ['content' => $content]);
+        } else {
+            return $content;
+        }
     }
 
     public function renderPartial($view, $params = [])
     {
         $dview = Dee::$app->view;
-        if (strncmp($view, '/', 1)) {
+        if (strncmp($view, '@', 1) !== 0 && strncmp($view, '/', 1) !== 0) {
             $view = "/{$this->id}/$view";
         }
         return $dview->render($view, $params);

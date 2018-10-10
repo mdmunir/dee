@@ -144,6 +144,11 @@ class Request
         return $this->_pathInfo;
     }
 
+    public function setBaseUrl($value)
+    {
+        $this->_baseUrl = $value;
+    }
+
     public function getBaseUrl()
     {
         if ($this->_baseUrl === null) {
@@ -152,12 +157,22 @@ class Request
         return $this->_baseUrl;
     }
 
+    public function setScriptUrl($value)
+    {
+        $this->_scriptUrl = $value;
+    }
+
     public function getScriptUrl()
     {
         if ($this->_scriptUrl === null) {
             $this->_scriptUrl = $_SERVER['SCRIPT_NAME'];
         }
         return $this->_scriptUrl;
+    }
+
+    public function setRequestUri($value)
+    {
+        $this->_requestUri = $value;
     }
 
     public function getRequestUri()

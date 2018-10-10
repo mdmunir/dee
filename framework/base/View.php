@@ -54,7 +54,9 @@ class View
 
     public function render($view, $params = [])
     {
-        if (strncmp($view, '/', 1) === 0 || count($this->_files) === 0) {
+        if (strncmp($view, '@', 1) === 0) {
+            $view = Dee::getAlias($view);
+        } elseif (strncmp($view, '/', 1) === 0 || count($this->_files) === 0) {
             $view = Dee::$app->basePath . '/views/' . ltrim($view, '/');
         } else {
             $view = dirname(end($this->_files)) . '/' . $view;
