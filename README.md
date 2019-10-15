@@ -220,6 +220,36 @@ public function actionCreate()
     $model->addNew($user);
 }
 ```
+## Sql Builder
+Untuk memudahkan penggunaan komponen database, maka beberapa fitur ditambahkan untuk membuat sintak sql sederhana. 
+
+### Where Builder
+
+```php
+$where = [
+    'colom1' => 'nilai 1',
+    'colom2' => [1, 2, 3],
+    "colom3 <> 5",
+];
+$params = [];
+$conditions = Dee::$app->db->buildCondition($where, $params);
+// maka variable $conditions dan $params akan bernilai
+// $conditions = "(colom1 = :p1) AND (colom2 in (:p2,:p3,:p4)) AND (colom3 <> 5)"
+// $params = [':p1' => 'nilai 1', ':p2' => 1,  ':p3' => 2,  ':p4' => 3, ];
+```
+
+### Insert Builder
+
+```php
+Dee::$app->db->insert('user', [
+    'username' => 'mdmunir,
+    'password' => mdm5($password),
+    'company_id' => 1001,    
+]);
+// akan memeksekusi sql
+// INSERT INTO user(username, password, company_id) values(:p1, :p2, :p3);
+// dengan $params = [':p1' => 'mdmunir', ':p2' => 'md5hash',  ':p3' => 1001 ];
+```
 
 # Autoloader
 Agar class-class dapat diload dengan benar, maka pastikan class-class yang ada memiliki namesapce yang bersesuaian dengan pathnya.
