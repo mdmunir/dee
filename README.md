@@ -243,12 +243,30 @@ $conditions = Dee::$app->db->buildCondition($where, $params);
 ```php
 Dee::$app->db->insert('user', [
     'username' => 'mdmunir,
-    'password' => mdm5($password),
+    'password' => md5($password),
     'company_id' => 1001,    
 ]);
 // akan memeksekusi sql
 // INSERT INTO user(username, password, company_id) values(:p1, :p2, :p3);
 // dengan $params = [':p1' => 'mdmunir', ':p2' => 'md5hash',  ':p3' => 1001 ];
+```
+
+### Update Builder
+```php
+Dee::$app->db->update('user', [
+    'password' => md5($password),
+], ['id' => 1]);
+// akan memeksekusi sql
+// UPDATE user SET password = :p1 WHERE (id = :p2);
+// dengan $params = [':p1' => 'md5hash', ':p2' => 1];
+```
+
+### Delete Builder
+```php
+Dee::$app->db->delete('user', ['id' => 1]);
+// akan memeksekusi sql
+// DELETE FROM WHERE (id = :p1);
+// dengan $params = [':p1' => 1];
 ```
 
 # Autoloader
