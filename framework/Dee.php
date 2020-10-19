@@ -88,6 +88,22 @@ class Dee
         header('Location: ' . static::createUrl($route, $params));
         exit();
     }
+
+    public static function hashData($data, $key)
+    {
+        $hash = hash_hmac('sha256', $data, $key);
+        return "$hash:$data";
+    }
+
+    public static function validateData($data, $key)
+    {
+        if (preg_match('/^([a-f0-9]+):(.*)/', $data, $matchs)) {
+            if (hash_hmac('sha256', $matchs[2], $key) === $matchs[1]) {
+                return $matchs[2];
+            }
+        }
+        return false;
+    }
 }
 
 Dee::$classMap = require(__DIR__ . '/classes.php');
