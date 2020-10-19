@@ -28,6 +28,7 @@ class Application
         'response' => ['class' => 'dee\base\Response'],
     ];
     public $basePath;
+    public $key;
     public $params = [];
     public $defaultRoute = 'site';
     public $showScriptName = true;
@@ -74,6 +75,15 @@ class Application
         }
         if (PHP_SAPI !== 'cli' && !isset(Dee::$aliases['@web'])) {
             Dee::setAlias('@web', $this->request->getBaseUrl());
+        }
+        if ($this->key === null) {
+            $filename = Dee::getAlias('@app/runtime/key.txt');
+            if (is_file($filename)) {
+                $this->key = file_get_contents($filename);
+            } else {
+                $this->key = strtr(substr(base64_encode(openssl_random_pseudo_bytes(32)), 0, 32), '+/=', '_-.');
+                file_put_contents($filename, $this->key);
+            }
         }
     }
 

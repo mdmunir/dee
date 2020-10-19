@@ -17,6 +17,7 @@ class Request
 
     public $rules = [];
     public $cache = false;
+    public $enableCookieValidation = false;
     private $_routes;
 
     /**
@@ -117,18 +118,44 @@ class Request
         }
         return $name === null ? $this->_bodyParams : (isset($this->_bodyParams[$name]) ? $this->_bodyParams[$name] : $default);
     }
-    
     private $_pathInfo;
     private $_baseUrl;
     private $_scriptUrl;
     private $_requestUri;
+    private $_cookies;
+
+    public function cookie($name = null, $default = null)
+    {
+        if ($this->_cookies === null) {
+            $this->_cookies = [];
+            $key = Dee::$app->key;
+            foreach ($_COOKIE as $name => $value) {
+                if (!is_string($value)) {
+                    continue;
+                }
+                if ($this->enableCookieValidation) {
+                    $value = Dee::validateData($value, $key);
+                    if ($value !== false) {
+                        $this->_cookies[$name] = $value;
+                    }
+                } else {
+                    $this->_cookies[$name] = $value;
+                }
+            }
+        }
+        if (isset($name)) {
+            return isset($this->_cookies[$name]) ? $this->_cookies[$name] : $default;
+        } else {
+            return $this->_cookies;
+        }
+    }
 
     public function getPathInfo()
     {
         if (defined('FORCE_REDIRECT_REST')) {
             return FORCE_REDIRECT_REST;
         }
-        if ($this->_pathInfo === null) {            
+        if ($this->_pathInfo === null) {
             $scriptUrl = $this->getScriptUrl();
             $baseUrl = $this->getBaseUrl();
             $requestUri = $this->getRequestUri();
