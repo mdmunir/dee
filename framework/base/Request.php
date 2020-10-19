@@ -18,6 +18,7 @@ class Request
     public $rules = [];
     public $cache = false;
     public $enableCookieValidation = false;
+    public $cookieValidationKey;
     private $_routes;
 
     /**
@@ -128,13 +129,15 @@ class Request
     {
         if ($this->_cookies === null) {
             $this->_cookies = [];
-            $key = Dee::$app->key;
+            if ($this->enableCookieValidation && !$this->cookieValidationKey) {
+                $this->cookieValidationKey = Dee::getKey(get_called_class());
+            }
             foreach ($_COOKIE as $name => $value) {
                 if (!is_string($value)) {
                     continue;
                 }
                 if ($this->enableCookieValidation) {
-                    $value = Dee::validateData($value, $key);
+                    $value = Dee::validateData($value, $this->cookieValidationKey);
                     if ($value !== false) {
                         $this->_cookies[$name] = $value;
                     }
