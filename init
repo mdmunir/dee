@@ -22,7 +22,11 @@ $files = getFileList("$root/instalation");
 
 $all = false;
 foreach ($files as $file) {
-    if (!copyFile($root, "instalation/$file", $file, $all, $params)) {
+    $copyTo = $file;
+    if($file === 'example.phpunit.xml'){
+        $copyTo = 'phpunit.xml';
+    }
+    if (!copyFile($root, "instalation/$file", $copyTo, $all, $params)) {
         break;
     }
 }
