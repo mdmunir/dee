@@ -21,11 +21,11 @@ use Exception;
 class Application
 {
     public $components = [
-        'view' => ['class' => 'dee\base\View'],
-        'user' => ['class' => 'dee\base\User'],
-        'db' => ['class' => 'dee\base\Connection'],
-        'request' => ['class' => 'dee\base\Request'],
-        'response' => ['class' => 'dee\base\Response'],
+        'view' => ['__class' => 'dee\base\View'],
+        'user' => ['__class' => 'dee\base\User'],
+        'db' => ['__class' => 'dee\base\Connection'],
+        'request' => ['__class' => 'dee\base\Request'],
+        'response' => ['__class' => 'dee\base\Response'],
     ];
     public $basePath;
     public $params = [];
