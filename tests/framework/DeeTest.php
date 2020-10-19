@@ -38,7 +38,7 @@ class DeeTest extends \tests\TestCase
     public function testCreateObject()
     {
         $config = [
-            'class' => 'StdClass',
+            '__class' => 'StdClass',
             'field1' => 'satu',
             'field2' => 'dua',
         ];

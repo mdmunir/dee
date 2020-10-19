@@ -63,8 +63,8 @@ class Dee
             $class = $type;
             $type = [];
         } else {
-            $class = $type['class'];
-            unset($type['class']);
+            $class = $type['__class'];
+            unset($type['__class']);
         }
         if (count($params)) {
             $reff = new ReflectionClass($class);
