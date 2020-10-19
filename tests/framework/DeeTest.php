@@ -20,6 +20,7 @@ class DeeTest extends \tests\TestCase
 
         $this->assertEquals("$path/runtime", Dee::getAlias('@test/runtime'));
         $this->assertEquals("$path/runtime/file.dat", Dee::getAlias('@test/runtime/file.dat'));
+        $this->assertEquals(false, Dee::getAlias('@testku/runtime'));
     }
 
     public function testHash()
@@ -32,5 +33,19 @@ class DeeTest extends \tests\TestCase
         $hash = Dee::hashData('Kalau data yang panjang', $key);
         $this->assertEquals('Kalau data yang panjang', Dee::validateData($hash, $key));
         $this->assertEquals(false, Dee::validateData($hash, 'invalid-key'));
+    }
+
+    public function testCreateObject()
+    {
+        $config = [
+            'class' => 'StdClass',
+            'field1' => 'satu',
+            'field2' => 'dua',
+        ];
+
+        $object = Dee::createObject($config);
+        $this->assertNotNull($object);
+        $this->assertNotNull($object->field1);
+        $this->assertEquals('dua', $object->field2);
     }
 }
