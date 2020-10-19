@@ -2,6 +2,8 @@
 
 namespace dee\base;
 
+use Dee;
+
 /**
  * Description of Response
  *
@@ -81,8 +83,18 @@ class Response
                 $replace = false;
             }
         }
+
+        $request = Dee::$app->request;
+        $enableCookieValidation = $request->enableCookieValidation;
+        if($enableCookieValidation && !$request->cookieValidationKey){
+            $request->cookieValidationKey = Dee::getKey(get_class($request));
+        }
         foreach ($this->_cookies as $name => $cookie) {
-            setcookie($name, $cookie['value'], $cookie['expire']);
+            if ($enableCookieValidation) {
+                setcookie($name, Dee::hashData($cookie['value'], $request->cookieValidationKey), $cookie['expire']);
+            } else {
+                setcookie($name, $cookie['value'], $cookie['expire']);
+            }
         }
     }
 }

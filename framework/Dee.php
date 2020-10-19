@@ -104,6 +104,22 @@ class Dee
         }
         return false;
     }
+    private static $_keys = [];
+
+    public static function getKey($name, $length = 32)
+    {
+        if (!isset(self::$_keys[$name])) {
+            $keyName = md5($name);
+            $filename = static::getAlias("@app/runtime/key-{$keyName}.txt");
+            if (is_file($filename)) {
+                self::$_keys[$name] = file_get_contents($filename);
+            } else {
+                self::$_keys[$name] = strtr(substr(base64_encode(openssl_random_pseudo_bytes($length)), 0, $length), '+/=', '_-.');
+                file_put_contents($filename, self::$_keys[$name]);
+            }
+        }
+        return self::$_keys[$name];
+    }
 }
 
 Dee::$classMap = require(__DIR__ . '/classes.php');
