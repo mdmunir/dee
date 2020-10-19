@@ -265,7 +265,7 @@ Dee::$app->db->update('user', [
 ```php
 Dee::$app->db->delete('user', ['id' => 1]);
 // akan memeksekusi sql
-// DELETE FROM WHERE (id = :p1);
+// DELETE FROM user WHERE (id = :p1);
 // dengan $params = [':p1' => 1];
 ```
 
