@@ -132,21 +132,21 @@ class Request
             if ($this->enableCookieValidation && !$this->cookieValidationKey) {
                 $this->cookieValidationKey = Dee::getKey(get_called_class());
             }
-            foreach ($_COOKIE as $name => $value) {
+            foreach ($_COOKIE as $key => $value) {
                 if (!is_string($value)) {
                     continue;
                 }
                 if ($this->enableCookieValidation) {
                     $value = Dee::validateData($value, $this->cookieValidationKey);
                     if ($value !== false) {
-                        $this->_cookies[$name] = $value;
+                        $this->_cookies[$key] = json_decode($value, true);
                     }
                 } else {
-                    $this->_cookies[$name] = $value;
+                    $this->_cookies[$key] = json_decode($value, true);
                 }
             }
         }
-        if (isset($name)) {
+        if ($name !== null) {
             return isset($this->_cookies[$name]) ? $this->_cookies[$name] : $default;
         } else {
             return $this->_cookies;
