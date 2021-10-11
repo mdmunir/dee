@@ -13,7 +13,6 @@ use Exception;
  * @property User $user
  * @property Request $request
  * @property Response $response
- * @property UrlManager $urlManager
  *
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 1.0

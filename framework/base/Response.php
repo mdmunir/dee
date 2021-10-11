@@ -38,7 +38,7 @@ class Response
     public function addCookie($name, $value, $expire = 0)
     {
         $this->_cookies[$name] = [
-            'value' => $value,
+            'value' => json_encode($value),
             'expire' => $expire,
         ];
     }
@@ -86,14 +86,22 @@ class Response
 
         $request = Dee::$app->request;
         $enableCookieValidation = $request->enableCookieValidation;
-        if($enableCookieValidation && !$request->cookieValidationKey){
+        if ($enableCookieValidation && !$request->cookieValidationKey) {
             $request->cookieValidationKey = Dee::getKey(get_class($request));
         }
         foreach ($this->_cookies as $name => $cookie) {
-            if ($enableCookieValidation) {
-                setcookie($name, Dee::hashData($cookie['value'], $request->cookieValidationKey), $cookie['expire']);
+            $expire = $cookie['expire'] > 0 ? mktime() + $cookie['expire'] : 0;
+            $value = $enableCookieValidation ? Dee::hashData($cookie['value'], $request->cookieValidationKey) : $cookie['value'];
+            if (PHP_VERSION_ID >= 70300) {
+                setcookie($name, $value, [
+                    'expires' => $expire,
+                    'path' => '/',
+                    'domain' => '',
+                    'secure' => false,
+                    'httpOnly' => true,
+                ]);
             } else {
-                setcookie($name, $cookie['value'], $cookie['expire']);
+                setcookie($name, $value, $expire, '/', '', false, true);
             }
         }
     }

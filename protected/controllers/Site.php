@@ -3,8 +3,8 @@
 namespace app\controllers;
 
 use dee\base\Controller;
-
 use Dee;
+
 /**
  * Description of SiteController
  *
@@ -32,7 +32,7 @@ class Site extends Controller
             $password = $_POST['password'];
 
             if ($username == 'admin' && $password == 'admin') {
-                Dee::$app->user->login($username);
+                Dee::$app->user->login($username, ['name' => 'Administrator'], 24 * 3600);
                 Dee::redirect('site/index');
             } else {
                 $message = 'Wrong username password';

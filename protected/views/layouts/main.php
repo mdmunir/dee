@@ -3,6 +3,8 @@
 $this->beginPage();
 
 $this->registerPackage('bootstrap');
+
+$user = Dee::$app->user;
 ?>
 <!DOCTYPE html>
 <html>
@@ -16,8 +18,8 @@ $this->registerPackage('bootstrap');
         <div class="wrap">
             <div class="container">
                 <div class="pull-right">
-                    <?php if (isset(Dee::$app->user->id)): ?>
-                        <?= Dee::$app->user->id ?> &nbsp; <a href="<?= Dee::createUrl('site/logout') ?>">Logout</a>
+                    <?php if ($user->isLoged): ?>
+                        <?= $user->id ?> &nbsp; <a href="<?= Dee::createUrl('site/logout') ?>">Logout</a>
                     <?php else: ?>
                         <a href="<?= Dee::createUrl('site/login') ?>">Login</a>
                     <?php endif; ?>
