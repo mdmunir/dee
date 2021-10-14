@@ -124,6 +124,7 @@ class Request
     private $_scriptUrl;
     private $_requestUri;
     private $_cookies;
+    private $_headers;
 
     public function cookie($name = null, $default = null)
     {
@@ -150,6 +151,40 @@ class Request
             return isset($this->_cookies[$name]) ? $this->_cookies[$name] : $default;
         } else {
             return $this->_cookies;
+        }
+    }
+
+    public function header($name = null, $default = null, $first = true)
+    {
+        if ($this->_headers === null) {
+            $this->_headers = [];
+            if (function_exists('getallheaders')) {
+                $headers = getallheaders();
+                foreach ($headers as $key => $value) {
+                    $this->_headers[strtolower($key)] = $value;
+                }
+            } elseif (function_exists('http_get_request_headers')) {
+                $headers = http_get_request_headers();
+                foreach ($headers as $key => $value) {
+                    $this->_headers[strtolower($key)] = $value;
+                }
+            } else {
+                foreach ($_SERVER as $key => $value) {
+                    if (strncmp($name, 'HTTP_', 5) === 0) {
+                        $key = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))));
+                        $this->_headers[strtolower($key)] = $value;
+                    }
+                }
+            }
+        }
+        if ($name !== null) {
+            $key = strtolower($name);
+            if (isset($this->_headers[$key])) {
+                return $first ? reset($this->_headers[$key]) : $this->_headers[$key];
+            }
+            return $default;
+        } else {
+            return $this->_headers;
         }
     }
 
