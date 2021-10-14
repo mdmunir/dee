@@ -17,6 +17,8 @@ class Response
     public $format = 'html';
     public $formatCallback = [];
     public $contentType;
+    public $statusCode = 200;
+    public $version;
     private $_headers = [];
     private $_cookies = [];
 
@@ -73,7 +75,6 @@ class Response
             $this->_headers['Content-Type'] = [$this->contentType];
         }
 
-
         foreach ($this->_headers as $name => $values) {
             $name = str_replace(' ', '-', ucwords(str_replace('-', ' ', $name)));
             // set replace for first occurrence of header but false afterwards to allow multiple
@@ -83,6 +84,9 @@ class Response
                 $replace = false;
             }
         }
+
+        $version = isset($_SERVER['SERVER_PROTOCOL']) && $_SERVER['SERVER_PROTOCOL'] === 'HTTP/1.0' ? '1.0' : '1.1';
+        header("HTTP/{$version} {$this->statusCode}");
 
         $request = Dee::$app->request;
         $enableCookieValidation = $request->enableCookieValidation;
